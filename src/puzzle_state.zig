@@ -19,6 +19,11 @@ pub fn PuzzleState(comptime width: usize, comptime height: usize) type {
     };
 }
 
+pub const PuzzleSolution = struct {
+    moves: std.ArrayList(Move),
+    number_of_nodes: usize,
+};
+
 pub fn tracePuzzleStateMoves(allocator: std.mem.Allocator, comptime width: usize, comptime height: usize, correctPuzzleState: *PuzzleState(width, height)) !std.ArrayList(Move) {
     const State = PuzzleState(width, height);
 

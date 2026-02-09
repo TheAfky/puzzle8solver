@@ -7,6 +7,7 @@ const state = @import("puzzle_state.zig");
 const bfs = @import("solvers/bfs.zig");
 
 pub const Move = state.Move;
+pub const PuzzleSolution = state.PuzzleSolution;
 pub const applyMoveToBoard = board.applyMoveToBoard;
 pub const Board = board.Board;
 pub const BoardType = board.BoardType;

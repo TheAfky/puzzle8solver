@@ -7,6 +7,7 @@ const array_utils = @import("../array_utils.zig");
 const Board = board.Board;
 const Move = state.Move;
 const PuzzleState = state.PuzzleState;
+const PuzzleSolution = state.PuzzleSolution;
 const Queue = @import("../queue.zig").Queue;
 
 pub fn solvePuzzleBFS(
@@ -15,13 +16,14 @@ pub fn solvePuzzleBFS(
     comptime height: usize,
     start: *Board(width, height),
     goal: *const Board(width, height),
-) !std.ArrayList(Move) {
+) !PuzzleSolution {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
     const arena_alloc = arena.allocator();
 
     const moves = [4]Move{ .Up, .Down, .Left, .Right };
     const State = PuzzleState(width, height);
+    var nodes_count: usize = 1;
 
     var state_queue = Queue(*State).init(arena_alloc);
     defer state_queue.deinit();
@@ -43,7 +45,7 @@ pub fn solvePuzzleBFS(
 
     while (state_queue.dequeue()) |current| {
         if (array_utils.isArrayEqual(width * height, &current.board, goal))
-            return state.tracePuzzleStateMoves(allocator, height, width, current);
+            return .{ .moves = try state.tracePuzzleStateMoves(allocator, height, width, current), .number_of_nodes = nodes_count};
 
         for (moves) |move| {
             const new_zero_index = board.nextBoardZeroIndex(width, height, current.zero_index, move) orelse continue;
@@ -63,6 +65,7 @@ pub fn solvePuzzleBFS(
 
             try visited.put(new_board, {});
             try state_queue.enqueue(child);
+            nodes_count += 1;
         }
     }
 
