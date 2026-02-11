@@ -20,8 +20,23 @@ pub fn PuzzleState(comptime width: usize, comptime height: usize) type {
 }
 
 pub const PuzzleSolution = struct {
+    const Self = @This();
+    allocator: std.mem.Allocator,
     moves: std.ArrayList(Move),
     number_of_nodes: usize,
+
+    pub fn init(allocator: std.mem.Allocator, moves: std.ArrayList(Move), number_of_nodes: usize) !Self {
+        var self: Self = undefined;
+        self.allocator = allocator;
+        self.moves = moves;
+        self.number_of_nodes = number_of_nodes;
+
+        return self;
+    }
+
+    pub fn deinit(self: *Self) void {
+        self.moves.deinit(self.allocator);
+    }
 };
 
 pub fn tracePuzzleStateMoves(allocator: std.mem.Allocator, comptime width: usize, comptime height: usize, correctPuzzleState: *PuzzleState(width, height)) !std.ArrayList(Move) {

@@ -37,21 +37,20 @@ pub fn solvePuzzleBFS(
         .zero_index = try array_utils.findZeroInArray(width * height, start.*),
         .parent = null,
         .move = null,
-    };    defer arena_alloc.destroy(start_state);
-
+    };
 
     try state_queue.enqueue(start_state);
     try visited.put(start_state.board, {});
 
-    while (state_queue.dequeue()) |current| {
-        if (array_utils.isArrayEqual(width * height, &current.board, goal))
-            return .{ .moves = try state.tracePuzzleStateMoves(allocator, height, width, current), .number_of_nodes = nodes_count};
+    while (state_queue.dequeue()) |currentState| {
+        if (array_utils.isArrayEqual(width * height, &currentState.board, goal))
+            return PuzzleSolution.init(allocator, try state.tracePuzzleStateMoves(allocator, height, width, currentState), nodes_count);
 
         for (moves) |move| {
-            const new_zero_index = board.nextBoardZeroIndex(width, height, current.zero_index, move) orelse continue;
+            const new_zero_index = board.nextBoardZeroIndex(width, height, currentState.zero_index, move) orelse continue;
 
-            var new_board = current.board;
-            try array_utils.switchItemsInArray(width * height, &new_board, current.zero_index, new_zero_index);
+            var new_board = currentState.board;
+            try array_utils.switchItemsInArray(width * height, &new_board, currentState.zero_index, new_zero_index);
 
             if (visited.contains(new_board)) continue;
 
@@ -59,7 +58,7 @@ pub fn solvePuzzleBFS(
             child.* = .{
                 .board = new_board,
                 .zero_index = new_zero_index,
-                .parent = current,
+                .parent = currentState,
                 .move = move,
             };
 

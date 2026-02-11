@@ -23,14 +23,14 @@ fn BFSTestHelper(comptime width: usize, comptime height: usize, start: *Board(wi
         start,
         &goal,
     );
-    defer solution.deinit(allocator);
+    defer solution.moves.deinit(allocator);
 
     std.debug.print("{}x{} BFS test\n", .{width, height});
-    for (solution.items) |step| {
+    for (solution.moves.items) |step| {
         std.debug.print("Step: {}\n", .{step});
     }
 
-    try board.applyMovesToBoard(width, height, start, solution.items);
+    try board.applyMovesToBoard(width, height, start, solution.moves.items);
 
     try std.testing.expect(std.mem.eql(BoardType, start, &goal));
 }

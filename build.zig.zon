@@ -1,6 +1,6 @@
 .{
     .name = .puzzle8solver,
-    .version = "1.0.0",
+    .version = "1.0.1",
     .fingerprint = 0x5c86a8c6ad14db4e,
     .minimum_zig_version = "0.15.1",
     .paths = .{
